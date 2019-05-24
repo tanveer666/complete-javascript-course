@@ -18,6 +18,10 @@ Change the game to follow these rules:
 3. Add another dice to the game, so that there are two dices now. The player looses his current score when one of them is a 1. (Hint: you will need CSS to position the second dice, so take a look at the CSS code for the first one.)
 */
 
+/***
+ * My rules, if either one of the dice is 1 or if both dice are 6 all scores are lost!
+ */
+
 let player0 = new Object();
 let player1 = new Object();
 let playerSelect;
@@ -30,7 +34,7 @@ document.querySelector(".btn-hold").addEventListener("click", hold);
 
 //on change to the maxScore element, maxPoints gets initialzed with the inpu value and also the input field is disabled for further tampering
 //The game will not start untill there is a value provided in the input field. As when the rollDice function is called on each dice roll,
-// It checks the value of maxPoints, which if still undefined because no value was input, means game will not procede. 
+// It checks the value of maxPoints, which if still undefined because no value was input, means game will not procede.
 let maxScoreElement = document.querySelector("#maxScore");
 
 maxScoreElement.addEventListener("change", function() {
@@ -61,8 +65,9 @@ function init() {
   document.querySelector("#current-1").textContent = 0;
 
   //Hide the dice
-  document.querySelector(".dice").style.display = "none";
-  
+  document.querySelector("#dice1").style.display = "none";
+  document.querySelector("#dice2").style.display = "none";
+
   //Sets the input field as active again and refreshes the value.
   maxScoreElement.disabled = false;
   maxScoreElement.value = 0;
@@ -91,13 +96,15 @@ function setActive() {
 }
 
 function hold() {
-  diceDom = document.querySelector(".dice");
+  diceDom = document.querySelector("#dice1");
+  diceDom2 = document.querySelector("#dice2");
 
   if (playerSelect === 1) {
     player1.globalScore += player1.currentScore;
     player1.currentScore = 0;
     updatePageData(playerSelect, player1);
     diceDom.style.display = "none";
+    diceDom2.style.display = "none";
     if (player1.globalScore >= maxPoints) winner(playerSelect);
     //if the player is winner, make him winner, otherwise change the active player.
     else {
@@ -109,6 +116,8 @@ function hold() {
     player0.currentScore = 0;
     updatePageData(playerSelect, player0);
     diceDom.style.display = "none";
+    diceDom2.style.display = "none";
+
     if (player0.globalScore >= maxPoints)
       //if the player is winner, calls the winner function, otherwise changes the active player.
       winner(playerSelect);
@@ -119,19 +128,28 @@ function hold() {
   }
 }
 
-function rollDice() { //this function only does something if playerSelect is either 1 or 0, anyother value and the function will not execute anything.
+function rollDice() {
+  //this function only does something if playerSelect is either 1 or 0, anyother value and the function will not execute anything.
   if (playerSelect === 1 && maxPoints) rollDiceAction(player1);
   else if (playerSelect === 0 && maxPoints) rollDiceAction(player0);
 }
 
 function rollDiceAction(player) {
   let diceRoll = Math.floor(Math.random() * 6) + 1; //Creates a number between 1-6
-  diceDom = document.querySelector(".dice");
+  let diceRoll2 = Math.floor(Math.random() * 6) + 1;
+  diceDom = document.querySelector("#dice1");
   diceDom.src = "dice-" + diceRoll + ".png"; //changes the dice pic and shows it on screen.
   diceDom.style.display = "block";
 
-  if (diceRoll !== 1) {
-    player.currentScore += diceRoll;
+  diceDom2 = document.querySelector("#dice2");
+  diceDom2.src = "dice-" + diceRoll2 + ".png";
+  diceDom2.style.display = "block";
+
+  console.log(diceRoll,diceRoll2);
+
+  if ((diceRoll !== 1 && diceRoll2 !== 1) &&
+      (diceRoll !== 6 || diceRoll2 !== 6)) {
+    player.currentScore += (diceRoll + diceRoll2);
     updatePageData(playerSelect, player);
   } else {
     player.currentScore = 0;
