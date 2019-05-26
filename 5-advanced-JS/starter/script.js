@@ -20,29 +20,36 @@ c) correct answer (I would use a number for this)
 
 --- Expert level ---
 
-8. After you display the result, display the next random question, so that the game never ends (Hint: write a function for this and call it right after displaying the result)
+//8. After you display the result, display the next random question, so that the game never ends (Hint: write a function for this and call it right after displaying the result)
 
-9. Be careful: after Task 8, the game literally never ends. So include the option to quit the game if the user writes 'exit' instead of the answer. In this case, DON'T call the function from task 8.
+//9. Be careful: after Task 8, the game literally never ends. So include the option to quit the game if the user writes 'exit' instead of the answer. In this case, DON'T call the function from task 8.
 
-10. Track the user's score to make the game more fun! So each time an answer is correct, add 1 point to the score (Hint: I'm going to use the power of closures for this, but you don't have to, just do this with the tools you feel more comfortable at this point).
+//10. Track the user's score to make the game more fun! So each time an answer is correct, add 1 point to the score (Hint: I'm going to use the power of closures for this, but you don't have to, just do this with the tools you feel more comfortable at this point).
 
-11. Display the score in the console. Use yet another method for this.
+//11. Display the score in the console. Use yet another method for this.
 */
 let userChoice, questionArray;
-function questionPrompt(response, callback) {
+function questionPrompt(response, userScore ,callback) {
   if (response !== "EXIT") {
     questionIndex = Math.floor(Math.random() * questionArray.length);
-    console.log(questionIndex);
+    //console.log(questionIndex);
     questionArray[questionIndex].askQuestion();
 
     userChoice = (prompt("Your answer is"));
-    questionArray[questionIndex].verifyAnswer(parseInt(userChoice));
-    callback(userChoice, callback);
+    userScore = questionArray[questionIndex].verifyAnswer(parseInt(userChoice),userScore);
+    showScore(userScore);
+    callback(userChoice, userScore ,callback);
   }
 }
 
+function showScore(score) {
+    console.log("Your score is "+ score);
+
+  }
+
 (function() {
   let questionNumber = 0;
+  let userScore = 0;
   function Question(question, answerArray, rightAnswer) {
     this.Question = question;
     this.answers = answerArray;
@@ -57,13 +64,17 @@ function questionPrompt(response, callback) {
     }
   };
 
-  Question.prototype.verifyAnswer = function(ans) {
+  Question.prototype.verifyAnswer = function(ans,score) {
     if (ans - 1 === this.rightAnswer) {
       alert("Right answer!");
+      score++;
+      return score;
     } else {
       alert("Wrong answer :(");
+      return score;
     }
   };
+
 
   let answer1 = ["V8", "Zend", "GCC"];
   let question1 = new Question("PHP runtime is", answer1, 1);
@@ -79,7 +90,7 @@ function questionPrompt(response, callback) {
 
   questionArray = [question1, question2, question3, question4];
 
-  userChoice = parseInt(prompt("Start game? "));
+  userChoice = prompt("Start game? ");
   /* Just calling questionPromp will quickly call the prompt function, and prompt function interfers with fully rendering the page
   *  That is why we use setTimeout function with 0. This means that after the first prompt instead of calling questionPrompt immediately
   *  which calls the prompt method which blocks the render, the questionPrompt gets put into the event queue, which ends for the global execution stack to exit.
@@ -87,7 +98,7 @@ function questionPrompt(response, callback) {
   * 
   * In a nutshell, setTimeout is here so that the page is fully rendered before questionPrompt is called again.
    */
-  setTimeout(questionPrompt,0,userChoice,questionPrompt);
+  setTimeout(questionPrompt,0,userChoice,userScore,questionPrompt);
   
 })();
 
