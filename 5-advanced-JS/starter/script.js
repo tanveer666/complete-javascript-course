@@ -29,6 +29,10 @@ c) correct answer (I would use a number for this)
 //11. Display the score in the console. Use yet another method for this.
 */
 let userChoice, questionArray;
+
+//Actual "recursive"/callback function, each time calling itself with the previous response string
+//Function stops calling itself when EXIT is entered as the last answers.
+//Entire game is basically the questionPrompt function.
 function questionPrompt(response, userScore ,callback) {
   if (response !== "EXIT") {
     questionIndex = Math.floor(Math.random() * questionArray.length);
@@ -55,6 +59,7 @@ function showScore(score) {
     this.answers = answerArray;
     this.rightAnswer = rightAnswer;
   }
+  /* every QUestion instance will inherit these 2 methods. */
   Question.prototype.askQuestion = function() {
     questionNumber++;
     console.log(questionNumber + ")" + this.Question);
@@ -75,6 +80,7 @@ function showScore(score) {
     }
   };
 
+  /* Creating a couple of question objects. */
 
   let answer1 = ["V8", "Zend", "GCC"];
   let question1 = new Question("PHP runtime is", answer1, 1);
@@ -100,7 +106,7 @@ function showScore(score) {
    */
   setTimeout(questionPrompt,0,userChoice,userScore,questionPrompt);
   
-})();
+})();  //Basically an init function called as IIFE
 
 
 
